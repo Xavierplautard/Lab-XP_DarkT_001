@@ -1,6 +1,34 @@
-import streamlit as st
 
-st.title("🎈 My new app")
-st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
-)
+# Install Streamlit first:
+#pip install streamlit transformers torch
+
+
+import streamlit as st
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
+import torch.nn.functional as F
+
+# Load model & tokenizer
+model_name = "microsoft/deberta-v3-base"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=3)
+
+# Prediction function
+def predict_dark_triad(text):
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+    with torch.no_grad():
+        logits = model(**inputs).logits
+    probs = F.softmax(logits, dim=-1).squeeze()
+    traits = ['Machiavellianism', 'Narcissism', 'Psychopathy']
+    return {trait: float(prob) for trait, prob in zip(traits, probs)}
+
+# Web UI
+st.title("🧠 Dark Triad Text Analyzer")
+text_input = st.text_area("Enter text to analyze:", "I always get what I want, no matter what it takes.")
+
+if st.button("Analyze"):
+    scores = predict_dark_triad(text_input)
+    st.subheader("Personality Trait Probabilities:")
+    for trait, score in scores.items():
+        st.write(f"**{trait}**: {score:.2%}")
+        st.progress(score)
