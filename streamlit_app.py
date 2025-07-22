@@ -4,13 +4,13 @@
 
 
 import streamlit as st
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import DebertaV2Tokenizer, AutoModelForSequenceClassification
 import torch
 import torch.nn.functional as F
 
 # Load model & tokenizer
 model_name = "microsoft/deberta-v3-base"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = DebertaV2Tokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=3)
 
 # Prediction function
