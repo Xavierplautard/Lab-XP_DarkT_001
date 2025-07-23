@@ -1,5 +1,7 @@
 streamlit
+streamlit
 transformers
 torch
 tiktoken
 sentencepiece
+plotly
